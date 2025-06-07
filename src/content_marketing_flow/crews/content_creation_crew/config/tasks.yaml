@@ -1,17 +1,155 @@
-research_task:
+# Phase 1: Research Tasks
+market_research_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    Conduct comprehensive market research for the topic '{topic}' to identify the latest trends, 
+    competitor insights, and market opportunities. Focus on content published in 2024-2025 to ensure 
+    current relevance. Research should target insights relevant to {target_audience}.
+    
+    Your research should include:
+    1. Latest trends and developments related to '{topic}' (search for "2024 2025 trends")
+    2. Current market landscape and key players
+    3. Recent competitor content and strategies
+    4. Emerging opportunities and challenges
+    5. Industry news and updates from the past 6 months
+    
+    Use current date context: It is currently {current_date}. Prioritize information from this year.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    A comprehensive market research summary containing:
+    - 5 latest trends related to '{topic}' with publication dates
+    - 3 key competitor insights with recent examples
+    - Current market opportunities and challenges
+    - Relevant statistics and data points from current year
+    - Sources and publication dates for all findings
+  agent: research_strategist
 
-reporting_task:
+audience_analysis_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Analyze the target audience '{target_audience}' and their current behavior patterns, preferences, 
+    and engagement habits across different social media platforms. Research current audience trends 
+    and platform usage patterns for {current_date}.
+    
+    Your analysis should cover:
+    1. Demographics and psychographics of {target_audience}
+    2. Platform preferences and usage patterns (Instagram, LinkedIn, Twitter, Facebook, blogs)
+    3. Content consumption habits and engagement patterns
+    4. Current challenges and pain points related to '{topic}'
+    5. Preferred content formats and communication styles
+    
+    Focus on recent data to ensure accuracy.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+    A detailed audience analysis report including:
+    - Target audience demographics and characteristics
+    - Platform-specific behavior and preferences
+    - Content engagement patterns and optimal posting times
+    - Key pain points and interests related to '{topic}'
+    - Recommendations for content approach and messaging
+  agent: research_strategist
+
+# Phase 2: Strategy Task
+content_strategy_task:
+  description: >
+    Based on the market research and audience analysis, develop a comprehensive content strategy 
+    for '{topic}' that will resonate with {target_audience}. Create a strategic framework that 
+    incorporates the key messages: {key_messages} and maintains a {brand_tone} tone throughout.
+    
+    Your strategy should define:
+    1. Core messaging and value proposition
+    2. Content pillars and themes
+    3. Platform-specific content approaches
+    4. Tone and voice guidelines ({brand_tone})
+    5. Key messaging framework incorporating: {key_messages}
+    6. Content structure and flow recommendations
+    
+    Ensure all recommendations align with current best practices and audience insights.
+  expected_output: >
+    A strategic content plan document containing:
+    - Core messaging framework and value proposition
+    - Content approach for each platform (Instagram, LinkedIn, Twitter, Facebook, Blog)
+    - Detailed tone and voice guidelines reflecting {brand_tone}
+    - Integration strategy for key messages: {key_messages}
+    - Content structure recommendations and best practices
+    - Success metrics and engagement strategies
+  agent: content_strategist
+
+# Phase 3: Content Creation Tasks
+draft_content_task:
+  description: >
+    Create an initial comprehensive content draft about '{topic}' that will serve as the foundation 
+    for all platform adaptations. The content should speak directly to {target_audience} using a 
+    {brand_tone} tone and naturally incorporate these key messages: {key_messages}.
+    
+    Create content that includes:
+    1. A compelling hook/opening that grabs attention
+    2. Main content body covering key aspects of '{topic}'
+    3. Clear value proposition for {target_audience}
+    4. Natural integration of key messages: {key_messages}
+    5. Engaging storytelling elements
+    6. Sufficient content depth for blog adaptation (500-800 words)
+    7. Key points that can be condensed for social media
+    
+    Maintain {brand_tone} tone throughout and ensure content is informative and engaging.
+  expected_output: >
+    A comprehensive content draft including:
+    - Engaging opening hook and introduction
+    - Well-structured main content (500-800 words)
+    - Clear value propositions for {target_audience}
+    - Natural integration of all key messages: {key_messages}
+    - Conclusion with clear next steps or insights
+    - Key quotable moments for social media adaptation
+    - Consistent {brand_tone} tone throughout
+  agent: content_writer
+
+edit_content_task:
+  description: >
+    Review and refine the content draft to ensure it meets the highest quality standards. Focus on 
+    improving clarity, flow, grammatical accuracy, and ensuring perfect alignment with the {brand_tone} 
+    tone for {target_audience}.
+    
+    Your editing should focus on:
+    1. Grammar, spelling, and punctuation accuracy
+    2. Sentence structure and readability improvement
+    3. Logical flow and coherence
+    4. Tone consistency ({brand_tone})
+    5. Message clarity and impact
+    6. Engagement and persuasiveness
+    7. Fact-checking and accuracy
+    
+    Ensure the content maintains its appeal to {target_audience} while being error-free and polished.
+  expected_output: >
+    A polished, high-quality content piece featuring:
+    - Perfect grammar, spelling, and punctuation
+    - Improved sentence structure and readability
+    - Logical flow and smooth transitions
+    - Consistent {brand_tone} tone throughout
+    - Enhanced clarity and message impact
+    - Engaging and persuasive language
+    - Ready for platform adaptation
+  agent: content_editor
+
+# Phase 4: SEO Optimization Task
+optimize_blog_seo_task:
+  description: >
+    Optimize the edited content specifically for blog publication with SEO best practices. Focus on 
+    making the content about '{topic}' discoverable by {target_audience} while maintaining the 
+    {brand_tone} tone and readability.
+    
+    Your optimization should include:
+    1. SEO-optimized title incorporating '{topic}' keywords
+    2. Meta description (150-160 characters)
+    3. Strategic keyword integration throughout content
+    4. Header structure (H1, H2, H3) for better readability
+    5. Internal linking suggestions
+    6. Image alt-text recommendations
+    7. Call-to-action integration: {call_to_action}
+    
+    Ensure SEO elements enhance rather than compromise content quality and {brand_tone}.
+  expected_output: >
+    SEO-optimized blog content including:
+    - Compelling SEO title with '{topic}' keywords
+    - Meta description (150-160 characters)
+    - Well-structured content with proper headers
+    - Strategic keyword placement and density
+    - Internal linking and image recommendations
+    - Integrated call-to-action: {call_to_action}
+    - Maintained {brand_tone} tone and readability
+  agent: seo_optimizer

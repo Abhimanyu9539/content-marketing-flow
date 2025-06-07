@@ -1,64 +1,124 @@
+"""
+Content Creation Crew - Sequential Process
+Handles research, strategy, content creation, and SEO optimization
+Located at: src/content_marketing_flow/crews/content_creation_crew/content_creation_crew.py
+"""
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from crewai.agents.agent_builder.base_agent import BaseAgent
-from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
+
 
 @CrewBase
 class ContentCreationCrew():
-    """ContentCreationCrew crew"""
+    """Content Creation Crew for research, strategy, and content development"""
 
-    agents: List[BaseAgent]
-    tasks: List[Task]
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks.yaml'
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def research_strategist(self) -> Agent:
+        """Research Strategist with web search capabilities"""
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['research_strategist'],
+            tools=[SerperDevTool(), ScrapeWebsiteTool()],
+            verbose=True,
+            max_iter = 1
+        )
+
+    @agent
+    def content_strategist(self) -> Agent:
+        """Content Strategist for strategic planning"""
+        return Agent(
+            config=self.agents_config['content_strategist'],
             verbose=True
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def content_writer(self) -> Agent:
+        """Content Writer for creating initial drafts"""
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config['content_writer'],
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
+    @agent
+    def content_editor(self) -> Agent:
+        """Content Editor for quality improvement"""
+        return Agent(
+            config=self.agents_config['content_editor'],
+            verbose=True
+        )
+
+    @agent
+    def seo_optimizer(self) -> Agent:
+        """SEO Optimizer for search engine optimization"""
+        return Agent(
+            config=self.agents_config['seo_optimizer'],
+            verbose=True
+        )
+
+    # Research Tasks
     @task
-    def research_task(self) -> Task:
+    def market_research_task(self) -> Task:
+        """Research market trends and competitors"""
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks_config['market_research_task'],
+            agent=self.research_strategist()
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def audience_analysis_task(self) -> Task:
+        """Analyze target audience behavior"""
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['audience_analysis_task'],
+            agent=self.research_strategist()
+        )
+
+    # Strategy Task
+    @task
+    def content_strategy_task(self) -> Task:
+        """Develop content strategy"""
+        return Task(
+            config=self.tasks_config['content_strategy_task'],
+            agent=self.content_strategist(),
+            context=[self.market_research_task(), self.audience_analysis_task()]
+        )
+
+    # Content Creation Tasks
+    @task
+    def draft_content_task(self) -> Task:
+        """Create initial content draft"""
+        return Task(
+            config=self.tasks_config['draft_content_task'],
+            agent=self.content_writer(),
+            context=[self.content_strategy_task()]
+        )
+
+    @task
+    def edit_content_task(self) -> Task:
+        """Edit and improve content quality"""
+        return Task(
+            config=self.tasks_config['edit_content_task'],
+            agent=self.content_editor(),
+            context=[self.draft_content_task()]
+        )
+
+    @task
+    def optimize_blog_seo_task(self) -> Task:
+        """Optimize content for SEO"""
+        return Task(
+            config=self.tasks_config['optimize_blog_seo_task'],
+            agent=self.seo_optimizer(),
+            context=[self.edit_content_task()]
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the ContentCreationCrew crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Create the content creation crew"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
-            process=Process.sequential,
+            agents=self.agents,
+            tasks=self.tasks,
+            process=Process.sequential,  # Sequential for quality control
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            memory=True
         )
