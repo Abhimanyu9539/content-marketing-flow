@@ -1,64 +1,113 @@
+"""
+Platform Adaptation Crew - Hierarchical Process
+Handles platform-specific content adaptation with parallel execution
+Located at: src/content_marketing_flow/crews/platform_adaptation_crew/platform_adaptation_crew.py
+"""
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from crewai.agents.agent_builder.base_agent import BaseAgent
-from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
 
 @CrewBase
 class PlatformAdaptationCrew():
-    """PlatformAdaptationCrew crew"""
+    """Platform Adaptation Crew for parallel content optimization"""
 
-    agents: List[BaseAgent]
-    tasks: List[Task]
+    agents_config = 'config/agents.yaml'
+    tasks_config = 'config/tasks.yaml'
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def instagram_adapter(self) -> Agent:
+        """Instagram Platform Adapter"""
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['instagram_adapter'],
             verbose=True
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def linkedin_adapter(self) -> Agent:
+        """LinkedIn Platform Adapter"""
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config['linkedin_adapter'],
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
+    @agent
+    def twitter_adapter(self) -> Agent:
+        """Twitter Platform Adapter"""
+        return Agent(
+            config=self.agents_config['twitter_adapter'],
+            verbose=True
+        )
+
+    @agent
+    def facebook_adapter(self) -> Agent:
+        """Facebook Platform Adapter"""
+        return Agent(
+            config=self.agents_config['facebook_adapter'],
+            verbose=True
+        )
+
+    @agent
+    def blog_adapter(self) -> Agent:
+        """Blog Platform Adapter"""
+        return Agent(
+            config=self.agents_config['blog_adapter'],
+            verbose=True
+        )
+
+    # Platform Adaptation Tasks
     @task
-    def research_task(self) -> Task:
+    def adapt_instagram_task(self) -> Task:
+        """Adapt content for Instagram"""
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks_config['adapt_instagram_task'],
+            agent=self.instagram_adapter(),
+            output_file='instagram_post.md'
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def adapt_linkedin_task(self) -> Task:
+        """Adapt content for LinkedIn"""
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config['adapt_linkedin_task'],
+            agent=self.linkedin_adapter(),
+            output_file='linkedin_post.md'
+        )
+
+    @task
+    def adapt_twitter_task(self) -> Task:
+        """Adapt content for Twitter"""
+        return Task(
+            config=self.tasks_config['adapt_twitter_task'],
+            agent=self.twitter_adapter(),
+            output_file='twitter_tweet.md'
+        )
+
+    @task
+    def adapt_facebook_task(self) -> Task:
+        """Adapt content for Facebook"""
+        return Task(
+            config=self.tasks_config['adapt_facebook_task'],
+            agent=self.facebook_adapter(),
+            output_file='facebook_post.md'
+        )
+
+    @task
+    def finalize_blog_task(self) -> Task:
+        """Finalize blog post"""
+        return Task(
+            config=self.tasks_config['finalize_blog_task'],
+            agent=self.blog_adapter(),
+            output_file='blog_post.md'
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the PlatformAdaptationCrew crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Create the platform adaptation crew with true parallel execution"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
-            process=Process.sequential,
+            agents=self.agents,
+            tasks=self.tasks,
+            process=Process.hierarchical,  # Hierarchical enables parallel execution
+            manager_llm="gpt-4o",     # Manager coordinates parallel tasks
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            memory=True
         )
